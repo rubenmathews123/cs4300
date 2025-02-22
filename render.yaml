@@ -1,0 +1,24 @@
+databases:
+  - name: mysitedb
+    plan: free
+    databaseName: mysite
+    user: mysite
+
+services:
+  - type: web
+    plan: free
+    name: movie-theater-booking
+    runtime: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn movie_theater_booking.asgi:application --host 0.0.0.0 --port 10000"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mysitedb
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
+      - key: PORT
+        value: 10000
